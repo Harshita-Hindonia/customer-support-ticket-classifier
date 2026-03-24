@@ -1,0 +1,10 @@
+2026-03-25 00:20:27,732 - INFO - Total tickets: 4
+2026-03-25 00:20:27,732 - INFO - Processing Ticket 1
+2026-03-25 00:20:27,827 - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+2026-03-25 00:20:28,454 - INFO - Success Ticket 1
+2026-03-25 00:20:28,455 - INFO - Processing Ticket 2
+2026-03-25 00:20:28,960 - INFO - Success Ticket 2
+2026-03-25 00:20:28,961 - INFO - Processing Ticket 3
+2026-03-25 00:20:29,400 - INFO - Success Ticket 3
+2026-03-25 00:20:29,401 - INFO - Processing Ticket 4
+2026-03-25 00:20:29,833 - INFO - Success Ticket 4

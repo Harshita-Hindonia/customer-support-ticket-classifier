@@ -2,6 +2,13 @@ import json
 import os
 from datetime import datetime
 
+import logging
+logging.basicConfig(
+    filename="app.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 import boto3
 from classifier import classify_ticket
 
@@ -10,8 +17,8 @@ S3_BUCKET_NAME = "s3-harshitahindonia-demobucket"
 
 
 def read_ticket():
-    print("Enter customer support ticket:")
-    return input("> ")
+    with open("sample.txt", "r", encoding="utf-8") as file:
+        return file.read().strip()
 
 
 def save_json(data):
@@ -34,24 +41,48 @@ def upload_to_s3(filepath):
 
 
 def main():
-    ticket = read_ticket()
+    try:
+        with open("sample.txt", "r", encoding="utf-8") as file:
+            content = file.read()
 
-    result = classify_ticket(ticket)
+        tickets = [t.strip() for t in content.split("\n\n") if t.strip()]
 
-    print(f"Category: {result['category']}")
-    print(f"Priority: {result['priority']}")
+        print(f"Total tickets found: {len(tickets)}\n")
+        logging.info(f"Total tickets: {len(tickets)}")
 
-    data = {
-        "ticket": ticket,
-        "category": result["category"],
-        "priority": result["priority"],
-        "timestamp": datetime.now().isoformat()
-    }
+        for i, ticket in enumerate(tickets, start=1):
+            try:
+                print(f"Processing Ticket {i}...")
+                logging.info(f"Processing Ticket {i}")
 
-    filepath = save_json(data)
-    print(f"Saved locally → {filepath}")
+                result = classify_ticket(ticket)
 
-    upload_to_s3(filepath)
+                print(f"Category: {result['category']}")
+                print(f"Priority: {result['priority']}")
+
+                data = {
+                    "ticket": ticket,
+                    "category": result["category"],
+                    "priority": result["priority"],
+                    "timestamp": datetime.now().isoformat()
+                }
+
+                filepath = save_json(data)
+                print(f"Saved locally → {filepath}")
+
+                upload_to_s3(filepath)
+
+                logging.info(f"Success Ticket {i}")
+
+            except Exception as e:
+                print(f"Error in Ticket {i}: {e}")
+                logging.error(f"Error in Ticket {i}: {e}")
+
+            print("-" * 40)
+
+    except Exception as e:
+        print(f"Critical Error: {e}")
+        logging.critical(f"Critical Error: {e}")
 
 
 if __name__ == "__main__":
